@@ -1,1 +1,1 @@
-web: java -XX:+UseSerialGC -Xms32m -Xmx192m -XX:MaxMetaspaceSize=256m -XX:ReservedCodeCacheSize=64m -jar build/libs/Test.jar
+web: java -jar build/libs/Test.jar
