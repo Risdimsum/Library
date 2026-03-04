@@ -9,6 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.math.BigDecimal;
+
 @Configuration
 public class DataInitializer {
 
@@ -19,12 +21,14 @@ public class DataInitializer {
                 User admin = new User();
                 admin.setName("Admin");
                 admin.setEmail("admin@library.local");
+                admin.setPassword("admin123");
                 admin.setRole(Role.ADMIN);
                 userRepository.save(admin);
 
                 User user = new User();
                 user.setName("Demo User");
                 user.setEmail("user@library.local");
+                user.setPassword("user123");
                 user.setRole(Role.USER);
                 userRepository.save(user);
             }
@@ -35,6 +39,10 @@ public class DataInitializer {
                 book1.setTitle("Effective Java");
                 book1.setAuthor("Joshua Bloch");
                 book1.setCategory("Programming");
+                book1.setPublication("Addison-Wesley");
+                book1.setDetail("A practical guide to writing robust Java applications.");
+                book1.setBranch("BSIT");
+                book1.setPrice(new BigDecimal("49.99"));
                 book1.setTotalCopies(5);
                 book1.setAvailableCopies(5);
 
@@ -43,6 +51,10 @@ public class DataInitializer {
                 book2.setTitle("Spring in Action");
                 book2.setAuthor("Craig Walls");
                 book2.setCategory("Framework");
+                book2.setPublication("Manning");
+                book2.setDetail("Hands-on Spring development patterns and features.");
+                book2.setBranch("BSCS");
+                book2.setPrice(new BigDecimal("54.90"));
                 book2.setTotalCopies(4);
                 book2.setAvailableCopies(4);
 

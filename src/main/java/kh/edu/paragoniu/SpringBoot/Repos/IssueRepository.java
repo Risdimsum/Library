@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface IssueRepository extends JpaRepository<Issue, Long> {
     List<Issue> findByStatus(IssueStatus status);
+    List<Issue> findAllByOrderByIssueDateDescIdDesc();
+    List<Issue> findByUserIdOrderByIssueDateDescIdDesc(Long userId);
 }

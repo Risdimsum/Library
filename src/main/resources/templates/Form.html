@@ -6,12 +6,12 @@
     <title th:text="${book.id != null} ? 'Edit Book' : 'Add Book'">Add Book</title>
     <style layout:fragment="extra-styles">
         :root {
-            --indigo: #4f46e5; --violet: #7c3aed;
-            --cyan: #06b6d4;   --emerald: #10b981;
-            --amber: #f59e0b;  --rose: #f43f5e;
+            --indigo: #4f46e5; --violet: #4f46e5;
+            --cyan: #4f46e5;   --emerald: #4f46e5;
+            --amber: #4f46e5;  --rose: #4f46e5;
         }
 
-        .form-wrap { max-width: 700px; }
+        .form-wrap { width: 100%; max-width: 1050px; }
 
         /* Colorful section headers */
         .sec-head {
@@ -85,7 +85,7 @@
         .branch-card label .branch-emoji { font-size: 1.4rem; }
         .branch-card input:checked + label {
             border-color: var(--indigo);
-            background: linear-gradient(135deg, #eff0ff, #e0e7ff);
+            background: #eff0ff;
             color: var(--indigo);
             box-shadow: 0 3px 12px rgba(79,70,229,0.15);
             transform: translateY(-2px);
@@ -133,7 +133,7 @@
         /* Buttons */
         .btn-save {
             padding: 12px 32px;
-            background: linear-gradient(135deg, var(--indigo), var(--violet));
+            background: var(--indigo);
             border: none; border-radius: 12px;
             color: #fff; font-family: 'Nunito', sans-serif;
             font-size: 0.9rem; font-weight: 800;
@@ -167,6 +167,14 @@
 <div layout:fragment="content">
 
     <div class="form-wrap">
+        <div th:if="${successMessage}" class="flash-success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="flash-error">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
         <div class="pg-card">
 
             <!-- ── FORM ── -->
@@ -201,25 +209,7 @@
                         <div class="err-msg" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="field-lbl">Category *</label>
-                        <select class="inp" th:class="${#fields.hasErrors('category')} ? 'inp is-invalid' : 'inp'"
-                                th:field="*{category}">
-                            <option value="">-- Select Category --</option>
-                            <option value="Science">Science</option>
-                            <option value="Technology">Technology</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Fiction">Fiction</option>
-                            <option value="Non-Fiction">Non-Fiction</option>
-                            <option value="History">History</option>
-                            <option value="Reference">Reference</option>
-                            <option value="Other">Other</option>
-                        </select>
-                        <div class="err-msg" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
-                    </div>
-
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <label class="field-lbl">Publisher</label>
                         <input class="inp" type="text" th:field="*{publication}" placeholder="e.g. MIT Press">
                     </div>
@@ -232,7 +222,7 @@
 
                 <!-- BRANCH -->
                 <div class="sec-head">
-                    <div class="sec-dot" style="background:var(--cyan)"></div>
+                    <div class="sec-dot" style="background:var(--indigo)"></div>
                     <span>Branch</span>
                 </div>
                 <div class="branch-grid mb-2">
@@ -256,7 +246,7 @@
 
                 <!-- STOCK & PRICE -->
                 <div class="sec-head">
-                    <div class="sec-dot" style="background:var(--emerald)"></div>
+                    <div class="sec-dot" style="background:var(--indigo)"></div>
                     <span>Stock & Pricing</span>
                 </div>
                 <div class="row g-3 mb-2">
@@ -277,17 +267,15 @@
 
                 <!-- PHOTO -->
                 <div class="sec-head">
-                    <div class="sec-dot" style="background:var(--amber)"></div>
+                    <div class="sec-dot" style="background:var(--indigo)"></div>
                     <span>Book Cover Photo</span>
                 </div>
-                <div class="upload-zone mb-1" onclick="document.getElementById('photoInp').click()">
+                <div class="upload-zone mb-1">
                     <div class="uz-icon">🖼️</div>
-                    <p>Click to upload book cover</p>
+                    <p>Upload book cover</p>
                     <small>PNG, JPG up to 5MB</small>
-                    <input type="file" id="photoInp" name="photo" accept="image/*"
-                           style="display:none" onchange="showFile(this)">
+                    <input class="inp mt-2" type="file" id="photoInp" name="photo" accept="image/*">
                 </div>
-                <div id="fileNameTag"></div>
 
                 <!-- BUTTONS -->
                 <div class="d-flex align-items-center gap-3 mt-4 pt-2" style="border-top:1px solid #f1f5f9;">
@@ -303,12 +291,5 @@
     </div>
 
 </div>
-
-<script layout:fragment="extra-scripts">
-    function showFile(input) {
-        const tag = document.getElementById('fileNameTag');
-        tag.textContent = input.files[0] ? '📎 ' + input.files[0].name : '';
-    }
-</script>
 </body>
 </html>

@@ -39,6 +39,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column
+    private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -51,6 +54,9 @@ public class User {
     public void prePersist() {
         if (role == null) {
             role = Role.USER;
+        }
+        if (password == null || password.isBlank()) {
+            password = "changeme123";
         }
         if (active == null) {
             active = true;
