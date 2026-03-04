@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Issue Report</title>
+    <style layout:fragment="extra-styles">
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 3px 12px rgba(79, 70, 229, 0.08);
+        }
+        .tbl { width: 100%; border-collapse: collapse; }
+        .tbl th, .tbl td {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 0.88rem;
+        }
+        .tbl th {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            font-weight: 800;
+            background: #f8fafc;
+        }
+        .status {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 800;
+            border-radius: 999px;
+            padding: 4px 8px;
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        .muted { color: #94a3b8; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="page-icon">📋</th:block>
+<th:block layout:fragment="page-title">Issue Report</th:block>
+<th:block layout:fragment="content">
+    <div class="table-card">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>Book</th>
+                <th>Issued By</th>
+                <th>Issued</th>
+                <th>Due</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(issues)}">
+                <td colspan="6" class="muted">No issued books yet.</td>
+            </tr>
+            <tr th:each="i : ${issues}">
+                <td th:text="${i.user.name}">Student</td>
+                <td th:text="${i.book.title}">Book</td>
+                <td th:text="${i.issuedByUser != null ? i.issuedByUser.name : 'Unknown'}">Issuer</td>
+                <td th:text="${#temporals.format(i.issueDate, 'yyyy-MM-dd')}">Issued</td>
+                <td th:text="${#temporals.format(i.dueDate, 'yyyy-MM-dd')}">Due</td>
+                <td><span class="status" th:text="${i.status}">ISSUED</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework",
+    "module": "spring-aspects",
+    "version": "7.0.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.2.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.aspectj",
+          "module": "aspectjweaver",
+          "version": {
+            "requires": "1.9.25"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-aspects-7.0.3.jar",
+          "url": "spring-aspects-7.0.3.jar",
+          "size": 50121,
+          "sha512": "60270b3040fa6167347e6c7506cfa0e231c826f618cc48af22904047c4ddab5d358a60324703dbc253ab573767e79340c531e1575d59cc83e03599e8e1e3c318",
+          "sha256": "a540a60950fb38b53022967a61d004bcca11eed99fe17b32b01ef8a832d81c70",
+          "sha1": "0f457f2a458f24ce92abc8f9874e975e301c995e",
+          "md5": "4581d3129172b3c1a61f3934d6c3b023"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.aspectj",
+          "module": "aspectjweaver",
+          "version": {
+            "requires": "1.9.25"
+          },
+          "excludes": [
+            {
+              "group": "org.aspectj",
+              "module": "aspectjtools"
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-aspects-7.0.3.jar",
+          "url": "spring-aspects-7.0.3.jar",
+          "size": 50121,
+          "sha512": "60270b3040fa6167347e6c7506cfa0e231c826f618cc48af22904047c4ddab5d358a60324703dbc253ab573767e79340c531e1575d59cc83e03599e8e1e3c318",
+          "sha256": "a540a60950fb38b53022967a61d004bcca11eed99fe17b32b01ef8a832d81c70",
+          "sha1": "0f457f2a458f24ce92abc8f9874e975e301c995e",
+          "md5": "4581d3129172b3c1a61f3934d6c3b023"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Student Report</title>
+    <style layout:fragment="extra-styles">
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 3px 12px rgba(79, 70, 229, 0.08);
+        }
+        .tbl { width: 100%; border-collapse: collapse; }
+        .tbl th, .tbl td {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 0.88rem;
+        }
+        .tbl th {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            font-weight: 800;
+            background: #f8fafc;
+        }
+        .muted { color: #94a3b8; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="page-icon">👥</th:block>
+<th:block layout:fragment="page-title">Student Report</th:block>
+<th:block layout:fragment="content">
+    <div class="table-card">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Created</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(students)}">
+                <td colspan="3" class="muted">No students found.</td>
+            </tr>
+            <tr th:each="s : ${students}">
+                <td th:text="${s.name}">Name</td>
+                <td th:text="${s.email}">Email</td>
+                <td th:text="${s.createdAt != null ? #temporals.format(s.createdAt, 'yyyy-MM-dd HH:mm') : '-'}">Date</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

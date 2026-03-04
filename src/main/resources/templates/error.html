@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Error</title>
+    <style layout:fragment="extra-styles">
+        .err-card {
+            max-width: 720px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.4rem;
+            box-shadow: 0 4px 18px rgba(79, 70, 229, 0.08);
+        }
+        .err-title {
+            margin: 0 0 8px;
+            color: #1e1b4b;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        .err-text {
+            margin: 0 0 14px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .btn-home {
+            display: inline-block;
+            text-decoration: none;
+            background: #4f46e5;
+            color: #fff;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 0.84rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="page-icon">⚠️</th:block>
+<th:block layout:fragment="page-title">Something Went Wrong</th:block>
+<th:block layout:fragment="content">
+    <section class="err-card">
+        <h4 class="err-title">Request failed</h4>
+        <p class="err-text">This action could not be completed. Check details below.</p>
+        <p class="err-text" th:if="${status != null}">
+            <strong>Status:</strong>
+            <span th:text="${status}">500</span>
+        </p>
+        <p class="err-text" th:if="${error != null}">
+            <strong>Error:</strong>
+            <span th:text="${error}">Internal Server Error</span>
+        </p>
+        <p class="err-text" th:if="${message != null and !#strings.isEmpty(message)}">
+            <strong>Message:</strong>
+            <span th:text="${message}">Error message</span>
+        </p>
+        <p class="err-text" th:if="${path != null}">
+            <strong>Path:</strong>
+            <span th:text="${path}">/students/add</span>
+        </p>
+        <a href="/students/add" class="btn-home">Back to Add Student</a>
+    </section>
+</th:block>
+</body>
+</html>

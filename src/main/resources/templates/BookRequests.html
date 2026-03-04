@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Book Requests</title>
+    <style layout:fragment="extra-styles">
+        .req-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 18px;
+        }
+
+        .req-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid #ede9fe;
+            box-shadow: 0 4px 18px rgba(79, 70, 229, 0.08);
+        }
+
+        .req-card h4 {
+            margin: 0 0 14px;
+            color: #312e81;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .f-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .f-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            margin-bottom: 8px;
+        }
+
+        .f-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: #fff;
+        }
+
+        .f-input.is-invalid {
+            border-color: #f43f5e;
+        }
+
+        .err-msg {
+            margin: -2px 0 8px;
+            color: #f43f5e;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .btn-submit {
+            border: none;
+            border-radius: 10px;
+            background: #4f46e5;
+            color: #fff;
+            padding: 10px 16px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .req-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .req-table th, .req-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            text-align: left;
+            font-size: 0.84rem;
+        }
+
+        .req-table th {
+            color: #64748b;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            background: #f8fafc;
+        }
+
+        .status-pill {
+            background: #ede9fe;
+            color: #5b21b6;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .muted {
+            color: #94a3b8;
+            font-size: 0.82rem;
+        }
+
+        @media (max-width: 950px) {
+            .req-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="page-icon">📩</th:block>
+<th:block layout:fragment="page-title">Book Requests</th:block>
+<th:block layout:fragment="content">
+    <div class="req-grid">
+        <section class="req-card">
+            <h4>New Request</h4>
+            <form th:action="@{/books/requests}" th:object="${bookRequest}" method="post">
+                <label class="f-label" for="requesterName">Requester Name</label>
+                <input id="requesterName" class="f-input" th:field="*{requesterName}"
+                       th:classappend="${#fields.hasErrors('requesterName')} ? ' is-invalid'" />
+                <div class="err-msg" th:if="${#fields.hasErrors('requesterName')}" th:errors="*{requesterName}"></div>
+
+                <label class="f-label" for="requestedTitle">Book Title</label>
+                <input id="requestedTitle" class="f-input" th:field="*{requestedTitle}"
+                       th:classappend="${#fields.hasErrors('requestedTitle')} ? ' is-invalid'" />
+                <div class="err-msg" th:if="${#fields.hasErrors('requestedTitle')}" th:errors="*{requestedTitle}"></div>
+
+                <button type="submit" class="btn-submit">Submit Request</button>
+            </form>
+        </section>
+
+        <section class="req-card">
+            <h4>Recent Requests</h4>
+            <table class="req-table">
+                <thead>
+                <tr>
+                    <th>Requester</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(requests)}">
+                    <td colspan="4" class="muted">No requests yet.</td>
+                </tr>
+                <tr th:each="r : ${requests}">
+                    <td th:text="${r.requesterName}">Requester</td>
+                    <td th:text="${r.requestedTitle}">Title</td>
+                    <td><span class="status-pill" th:text="${r.status}">PENDING</span></td>
+                    <td th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm')}">Date</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</th:block>
+</body>
+</html>

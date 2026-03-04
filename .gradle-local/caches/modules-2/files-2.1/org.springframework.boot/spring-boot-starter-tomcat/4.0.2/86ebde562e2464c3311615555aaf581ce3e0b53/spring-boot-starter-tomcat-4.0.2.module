@@ -1,0 +1,146 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework.boot",
+    "module": "spring-boot-starter-tomcat",
+    "version": "4.0.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.3.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter-tomcat-runtime",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-tomcat",
+          "version": {
+            "requires": "4.0.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-starter-tomcat-4.0.2.jar",
+          "url": "spring-boot-starter-tomcat-4.0.2.jar",
+          "size": 2021,
+          "sha512": "01cdd14640968d7b16b4daeb024241640921bb59fb4edb874e27959998e16313065485714099df447a809a28117910daee662884d1a7fc3966726520bcd1f4a0",
+          "sha256": "b9cb0b3902cb0c60154b49ad8b0f0480c8c5fd9410650e80c28391d4b0c416ae",
+          "sha1": "fbe3d2c53b91570c1570e3a6150df6373aa2aa93",
+          "md5": "0c8c7c0c0c1d2b78cec6923614e74ba3"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter-tomcat-runtime",
+          "version": {
+            "requires": "4.0.2"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-tomcat",
+          "version": {
+            "requires": "4.0.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-boot-starter-tomcat-4.0.2.jar",
+          "url": "spring-boot-starter-tomcat-4.0.2.jar",
+          "size": 2021,
+          "sha512": "01cdd14640968d7b16b4daeb024241640921bb59fb4edb874e27959998e16313065485714099df447a809a28117910daee662884d1a7fc3966726520bcd1f4a0",
+          "sha256": "b9cb0b3902cb0c60154b49ad8b0f0480c8c5fd9410650e80c28391d4b0c416ae",
+          "sha1": "fbe3d2c53b91570c1570e3a6150df6373aa2aa93",
+          "md5": "0c8c7c0c0c1d2b78cec6923614e74ba3"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-tomcat-4.0.2-javadoc.jar",
+          "url": "spring-boot-starter-tomcat-4.0.2-javadoc.jar",
+          "size": 2021,
+          "sha512": "01cdd14640968d7b16b4daeb024241640921bb59fb4edb874e27959998e16313065485714099df447a809a28117910daee662884d1a7fc3966726520bcd1f4a0",
+          "sha256": "b9cb0b3902cb0c60154b49ad8b0f0480c8c5fd9410650e80c28391d4b0c416ae",
+          "sha1": "fbe3d2c53b91570c1570e3a6150df6373aa2aa93",
+          "md5": "0c8c7c0c0c1d2b78cec6923614e74ba3"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "spring-boot-starter-tomcat-4.0.2-sources.jar",
+          "url": "spring-boot-starter-tomcat-4.0.2-sources.jar",
+          "size": 2021,
+          "sha512": "01cdd14640968d7b16b4daeb024241640921bb59fb4edb874e27959998e16313065485714099df447a809a28117910daee662884d1a7fc3966726520bcd1f4a0",
+          "sha256": "b9cb0b3902cb0c60154b49ad8b0f0480c8c5fd9410650e80c28391d4b0c416ae",
+          "sha1": "fbe3d2c53b91570c1570e3a6150df6373aa2aa93",
+          "md5": "0c8c7c0c0c1d2b78cec6923614e74ba3"
+        }
+      ]
+    }
+  ]
+}

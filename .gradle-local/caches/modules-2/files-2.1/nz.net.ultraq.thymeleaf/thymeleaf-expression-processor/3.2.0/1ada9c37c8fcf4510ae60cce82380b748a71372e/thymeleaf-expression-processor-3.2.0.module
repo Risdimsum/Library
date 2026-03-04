@@ -1,0 +1,105 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "nz.net.ultraq.thymeleaf",
+    "module": "thymeleaf-expression-processor",
+    "version": "3.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.apache.groovy",
+          "module": "groovy",
+          "version": {
+            "requires": "4.0.14"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "thymeleaf-expression-processor-3.2.0.jar",
+          "url": "thymeleaf-expression-processor-3.2.0.jar",
+          "size": 5480,
+          "sha512": "ca244dad5c28cef9aa6de8ee59ed573ad8d89fb340f45245b893a01a0af41961fd0306db198026c620f077ddefb281b1349d4d0adb78ab2fce817489b5ff5fa0",
+          "sha256": "9d5dd831efccbbaec28d2c9228b2b08f0ec8badb9c8b232ec7dae0f18888502c",
+          "sha1": "566d36d35ba24120e8cef0d55869868e042785cf",
+          "md5": "801a6cf8026aee19c0c84d4c1d4284f4"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.thymeleaf",
+          "module": "thymeleaf",
+          "version": {
+            "requires": "3.1.2.RELEASE"
+          }
+        },
+        {
+          "group": "org.apache.groovy",
+          "module": "groovy",
+          "version": {
+            "requires": "4.0.14"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "thymeleaf-expression-processor-3.2.0.jar",
+          "url": "thymeleaf-expression-processor-3.2.0.jar",
+          "size": 5480,
+          "sha512": "ca244dad5c28cef9aa6de8ee59ed573ad8d89fb340f45245b893a01a0af41961fd0306db198026c620f077ddefb281b1349d4d0adb78ab2fce817489b5ff5fa0",
+          "sha256": "9d5dd831efccbbaec28d2c9228b2b08f0ec8badb9c8b232ec7dae0f18888502c",
+          "sha1": "566d36d35ba24120e8cef0d55869868e042785cf",
+          "md5": "801a6cf8026aee19c0c84d4c1d4284f4"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "thymeleaf-expression-processor-3.2.0-sources.jar",
+          "url": "thymeleaf-expression-processor-3.2.0-sources.jar",
+          "size": 4966,
+          "sha512": "f388bf68bb677c2d33d628e81e7697b58f51c76723c21490f228a0f688153ce0e7a400b613c61a88a9e3bcdd37db83ad6b4c7c9b2bc835f165d99776610e6954",
+          "sha256": "9c86e06aec6563b95426c3d8280789b584d33c4f0ef2c549f42ff3f08a4e3c1f",
+          "sha1": "be269a0dfa2537c170ef8c423447c9b747062674",
+          "md5": "dfafd62baaa6a002d27297947779d847"
+        }
+      ]
+    }
+  ]
+}

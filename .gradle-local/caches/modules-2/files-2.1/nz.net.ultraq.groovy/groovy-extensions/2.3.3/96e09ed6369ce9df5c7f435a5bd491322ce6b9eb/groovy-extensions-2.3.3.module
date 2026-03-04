@@ -1,0 +1,89 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "nz.net.ultraq.groovy",
+    "module": "groovy-extensions",
+    "version": "2.3.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.6"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "groovy-extensions-2.3.3.jar",
+          "url": "groovy-extensions-2.3.3.jar",
+          "size": 33155,
+          "sha512": "46d409f3de3e0c29a3dd64a92a38626a310efe27c7ad98990bd5026665bd8983806af23cb4a50cb9800363255f493461f4a4f0637a6b519a261b5533a0e201bc",
+          "sha256": "3f2ec0ae7f25e441310e63125ddd6abfaa25fd25704423a360e9c10721a6c5b8",
+          "sha1": "aa11aa8987970180f538e3b0346634662855d274",
+          "md5": "81cf8217878936b09d26e15c52353b74"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.apache.groovy",
+          "module": "groovy",
+          "version": {
+            "requires": "4.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "groovy-extensions-2.3.3.jar",
+          "url": "groovy-extensions-2.3.3.jar",
+          "size": 33155,
+          "sha512": "46d409f3de3e0c29a3dd64a92a38626a310efe27c7ad98990bd5026665bd8983806af23cb4a50cb9800363255f493461f4a4f0637a6b519a261b5533a0e201bc",
+          "sha256": "3f2ec0ae7f25e441310e63125ddd6abfaa25fd25704423a360e9c10721a6c5b8",
+          "sha1": "aa11aa8987970180f538e3b0346634662855d274",
+          "md5": "81cf8217878936b09d26e15c52353b74"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "groovy-extensions-2.3.3-sources.jar",
+          "url": "groovy-extensions-2.3.3-sources.jar",
+          "size": 17809,
+          "sha512": "4d6c2bc1eceb10fc0089a32b3e476f482a964c771fa6b5496d6d1a387d809efa0861516a6bb770256f73187f4c43d78e11430fa3b37220090e386208d11a5306",
+          "sha256": "b4f1429cb2bf24b5ed1dea97aa2fbb39dcfd634b77d34256b7f426ce82590406",
+          "sha1": "49410e16f29568539f600ff911218567c6a5453a",
+          "md5": "535e78b727b203982833c8c0f0879025"
+        }
+      ]
+    }
+  ]
+}

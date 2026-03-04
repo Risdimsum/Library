@@ -1,0 +1,96 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.springframework",
+    "module": "spring-tx",
+    "version": "7.0.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.2.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework",
+          "module": "spring-beans",
+          "version": {
+            "requires": "7.0.3"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-core",
+          "version": {
+            "requires": "7.0.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-tx-7.0.3.jar",
+          "url": "spring-tx-7.0.3.jar",
+          "size": 287722,
+          "sha512": "6c700c81081b85ea4a7f55515946e4497fd1426945ea180dbcdebc97956de197ce391605e1fd7d2158ed1d44130f6122a99f3950292e0d213f4e1398a1f40dc7",
+          "sha256": "c31afe1a8b77581d4a32c7f7fe5f9447f8a68ef7503897c2807958a06971c458",
+          "sha1": "20da860c4c795f5c9f5dd1f3b2dbc4518cd724a6",
+          "md5": "d427addaa1b76c85ba037dfff78b23d5"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework",
+          "module": "spring-beans",
+          "version": {
+            "requires": "7.0.3"
+          }
+        },
+        {
+          "group": "org.springframework",
+          "module": "spring-core",
+          "version": {
+            "requires": "7.0.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "spring-tx-7.0.3.jar",
+          "url": "spring-tx-7.0.3.jar",
+          "size": 287722,
+          "sha512": "6c700c81081b85ea4a7f55515946e4497fd1426945ea180dbcdebc97956de197ce391605e1fd7d2158ed1d44130f6122a99f3950292e0d213f4e1398a1f40dc7",
+          "sha256": "c31afe1a8b77581d4a32c7f7fe5f9447f8a68ef7503897c2807958a06971c458",
+          "sha1": "20da860c4c795f5c9f5dd1f3b2dbc4518cd724a6",
+          "md5": "d427addaa1b76c85ba037dfff78b23d5"
+        }
+      ]
+    }
+  ]
+}
