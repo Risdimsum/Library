@@ -1,1 +1,1 @@
-web: java -Xms96m -Xmx256m -XX:+UseSerialGC -XX:MaxMetaspaceSize=128m -Xss256k -jar build/libs/Test.jar
+web: java -Xms64m -Xmx160m -XX:+UseSerialGC -XX:MaxMetaspaceSize=96m -XX:MaxDirectMemorySize=32m -Xss256k -jar build/libs/Test.jar
