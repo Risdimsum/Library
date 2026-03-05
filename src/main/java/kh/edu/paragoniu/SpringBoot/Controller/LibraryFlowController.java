@@ -46,6 +46,15 @@ public class    LibraryFlowController {
         return value == null ? "Guest" : value.toString();
     }
 
+    @ModelAttribute("currentUserRoleLabel")
+    public String currentUserRoleLabel(HttpSession session) {
+        User currentUser = resolveSessionUser(session);
+        if (currentUser == null) {
+            return "Guest";
+        }
+        return Role.ADMIN.equals(currentUser.getRole()) ? "Admin" : "Student";
+    }
+
     @GetMapping("/students/add")
     public String showAddStudent(Model model, HttpSession session) {
         if (resolveSessionUser(session) == null) {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -107,11 +108,21 @@ public class BookController {
         return value == null ? "Guest" : value.toString();
     }
 
+    @ModelAttribute("currentUserRoleLabel")
+    public String currentUserRoleLabel(HttpSession session) {
+        User currentUser = resolveSessionUser(session);
+        if (currentUser == null) {
+            return "Guest";
+        }
+        return Role.ADMIN.equals(currentUser.getRole()) ? "Admin" : "Student";
+    }
+
     @GetMapping("/books")
     public String listBooks(@RequestParam(value = "keyword", required = false) String keyword,
                             Model model,
                             HttpSession session) {
-        if (resolveSessionUser(session) == null) {
+        User currentUser = resolveSessionUser(session);
+        if (currentUser == null) {
             return "redirect:/login";
         }
         List<Book> books;
@@ -121,6 +132,7 @@ public class BookController {
             books = bookRepository.searchByTitleOrAuthor(keyword.trim());
         }
         model.addAttribute("books", books);
+        model.addAttribute("isAdmin", Role.ADMIN.equals(currentUser.getRole()));
         model.addAttribute("keyword", keyword == null ? "" : keyword);
         model.addAttribute("activePage", "book-record");
         return "List";
@@ -128,8 +140,13 @@ public class BookController {
 
     @GetMapping("/books/add")
     public String showAddForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (resolveSessionUser(session) == null) {
+        User currentUser = resolveSessionUser(session);
+        if (currentUser == null) {
             return "redirect:/login";
+        }
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Only admin can add books.");
+            return "redirect:/books";
         }
         if (userRepository.findByRoleOrderByCreatedAtDesc(Role.USER).isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Step 1: add a student before adding books.");
@@ -151,6 +168,10 @@ public class BookController {
         User currentUser = resolveSessionUser(session);
         if (currentUser == null) {
             return "redirect:/login";
+        }
+        if (!Role.ADMIN.equals(currentUser.getRole())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Only admin can add books.");
+            return "redirect:/books";
         }
         if (result.hasErrors()) {
             model.addAttribute("book", book);
@@ -254,6 +275,26 @@ public class BookController {
         bookRequestRepository.save(bookRequest);
         redirectAttributes.addFlashAttribute("successMessage", "Book request submitted successfully.");
         return "redirect:/books/requests";
+    }
+
+    @GetMapping("/switch-role")
+    public String switchRole(HttpSession session,
+                             RedirectAttributes redirectAttributes,
+                             @RequestHeader(value = "Referer", required = false) String referer) {
+        User currentUser = resolveSessionUser(session);
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        Role nextRole = Role.ADMIN.equals(currentUser.getRole()) ? Role.USER : Role.ADMIN;
+        currentUser.setRole(nextRole);
+        userRepository.save(currentUser);
+        redirectAttributes.addFlashAttribute("successMessage",
+                Role.ADMIN.equals(nextRole) ? "Switched to Admin." : "Switched to Student.");
+
+        if (referer != null && !referer.isBlank()) {
+            return "redirect:" + referer;
+        }
+        return "redirect:/books";
     }
 
     private User resolveSessionUser(HttpSession session) {

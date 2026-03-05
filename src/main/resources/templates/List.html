@@ -174,7 +174,8 @@
                     <input type="text" name="keyword" class="search-inp"
                            placeholder="Search title or author..." th:value="${keyword}">
                 </form>
-                <a href="/books/add" class="btn-add"><i class="bi bi-plus-lg"></i> Add Book</a>
+                <a th:if="${isAdmin}" href="/books/add" class="btn-add"><i class="bi bi-plus-lg"></i> Add Book</a>
+                <span th:unless="${isAdmin}" class="meta-pill">Only Admin can add book</span>
             </div>
         </div>
 
@@ -202,7 +203,8 @@
         </ul>
 
         <div th:if="${#lists.isEmpty(books)}" class="empty-st">
-            No books found. <a href="/books/add">Add your first book</a>.
+            <span th:if="${isAdmin}">No books found. <a href="/books/add">Add your first book</a>.</span>
+            <span th:unless="${isAdmin}">No books found.</span>
         </div>
     </section>
 </div>
