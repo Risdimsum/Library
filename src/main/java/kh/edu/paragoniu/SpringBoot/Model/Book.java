@@ -31,7 +31,6 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "ISBN is mandatory")
     @Column(nullable = false, unique = true)
     private String isbn;
 
@@ -43,7 +42,6 @@ public class Book {
     @Column(nullable = false)
     private String author;
 
-    @NotBlank(message = "Category is mandatory")
     @Column(nullable = false)
     private String category;
 
@@ -74,6 +72,12 @@ public class Book {
 
     @PrePersist
     public void prePersist() {
+        if (isbn == null || isbn.isBlank()) {
+            isbn = "AUTO-" + System.currentTimeMillis();
+        }
+        if (category == null || category.isBlank()) {
+            category = "General";
+        }
         if (availableCopies == null) {
             availableCopies = totalCopies;
         }

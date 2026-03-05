@@ -179,7 +179,7 @@
 
             <!-- ── FORM ── -->
             <form th:action="${book.id != null} ? @{/books/edit/{id}(id=${book.id})} : @{/books/add}"
-                  th:object="${book}" method="post" enctype="multipart/form-data">
+                  th:object="${book}" method="post">
 
                 <!-- BOOK INFO -->
                 <div class="sec-head">
@@ -189,9 +189,9 @@
 
                 <div class="row g-3 mb-2">
                     <div class="col-12">
-                        <label class="field-lbl">Book Title *</label>
+                        <label class="field-lbl">Book Name *</label>
                         <input class="inp" th:class="${#fields.hasErrors('title')} ? 'inp is-invalid' : 'inp'"
-                               type="text" th:field="*{title}" placeholder="e.g. Introduction to Algorithms">
+                               type="text" th:field="*{title}" placeholder="e.g. Effective Java">
                         <div class="err-msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
                     </div>
 
@@ -203,78 +203,11 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="field-lbl">ISBN *</label>
-                        <input class="inp" th:class="${#fields.hasErrors('isbn')} ? 'inp is-invalid' : 'inp'"
-                               type="text" th:field="*{isbn}" placeholder="e.g. 978-0-262-03384-8">
-                        <div class="err-msg" th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></div>
-                    </div>
-
-                    <div class="col-12">
-                        <label class="field-lbl">Publisher</label>
-                        <input class="inp" type="text" th:field="*{publication}" placeholder="e.g. MIT Press">
-                    </div>
-
-                    <div class="col-12">
-                        <label class="field-lbl">Book Description</label>
-                        <textarea class="inp" th:field="*{detail}" placeholder="Short summary of the book..."></textarea>
-                    </div>
-                </div>
-
-                <!-- BRANCH -->
-                <div class="sec-head">
-                    <div class="sec-dot" style="background:var(--indigo)"></div>
-                    <span>Branch</span>
-                </div>
-                <div class="branch-grid mb-2">
-                    <div class="branch-card">
-                        <input type="radio" id="bOther" th:field="*{branch}" value="Other">
-                        <label for="bOther"><span class="branch-emoji">🏫</span>Other</label>
-                    </div>
-                    <div class="branch-card">
-                        <input type="radio" id="bBSIT" th:field="*{branch}" value="BSIT">
-                        <label for="bBSIT"><span class="branch-emoji">💻</span>BSIT</label>
-                    </div>
-                    <div class="branch-card">
-                        <input type="radio" id="bBSCS" th:field="*{branch}" value="BSCS">
-                        <label for="bBSCS"><span class="branch-emoji">🖥️</span>BSCS</label>
-                    </div>
-                    <div class="branch-card">
-                        <input type="radio" id="bBSSE" th:field="*{branch}" value="BSSE">
-                        <label for="bBSSE"><span class="branch-emoji">⚙️</span>BSSE</label>
-                    </div>
-                </div>
-
-                <!-- STOCK & PRICE -->
-                <div class="sec-head">
-                    <div class="sec-dot" style="background:var(--indigo)"></div>
-                    <span>Stock & Pricing</span>
-                </div>
-                <div class="row g-3 mb-2">
-                    <div class="col-md-6">
-                        <label class="field-lbl">Price ($)</label>
-                        <div class="prefix-input">
-                            <div class="prefix">$</div>
-                            <input class="inp" type="number" th:field="*{price}" min="0" step="0.01" placeholder="0.00">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="field-lbl">Total Copies *</label>
+                        <label class="field-lbl">Items *</label>
                         <input class="inp" th:class="${#fields.hasErrors('totalCopies')} ? 'inp is-invalid' : 'inp'"
                                type="number" th:field="*{totalCopies}" min="1" placeholder="1">
                         <div class="err-msg" th:if="${#fields.hasErrors('totalCopies')}" th:errors="*{totalCopies}"></div>
                     </div>
-                </div>
-
-                <!-- PHOTO -->
-                <div class="sec-head">
-                    <div class="sec-dot" style="background:var(--indigo)"></div>
-                    <span>Book Cover Photo</span>
-                </div>
-                <div class="upload-zone mb-1">
-                    <div class="uz-icon">🖼️</div>
-                    <p>Upload book cover</p>
-                    <small>PNG, JPG up to 5MB</small>
-                    <input class="inp mt-2" type="file" id="photoInp" name="photo" accept="image/*">
                 </div>
 
                 <!-- BUTTONS -->

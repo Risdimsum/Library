@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Controller
 public class BookController {
@@ -156,33 +157,7 @@ public class BookController {
             model.addAttribute("activePage", "add-book");
             return "Form";
         }
-        Book existing = bookRepository.findByIsbn(book.getIsbn()).orElse(null);
-        if (existing != null) {
-            int addCopies = book.getTotalCopies() == null ? 0 : book.getTotalCopies();
-            int currentTotal = existing.getTotalCopies() == null ? 0 : existing.getTotalCopies();
-            int currentAvailable = existing.getAvailableCopies() == null ? 0 : existing.getAvailableCopies();
-            existing.setTotalCopies(currentTotal + addCopies);
-            existing.setAvailableCopies(currentAvailable + addCopies);
-            if (book.getPrice() != null) {
-                existing.setPrice(book.getPrice());
-            }
-            if (book.getBranch() != null && !book.getBranch().isBlank()) {
-                existing.setBranch(book.getBranch());
-            }
-            if (book.getCategory() != null && !book.getCategory().isBlank()) {
-                existing.setCategory(book.getCategory());
-            }
-            if (book.getPublication() != null && !book.getPublication().isBlank()) {
-                existing.setPublication(book.getPublication());
-            }
-            if (book.getDetail() != null && !book.getDetail().isBlank()) {
-                existing.setDetail(book.getDetail());
-            }
-            bookRepository.save(existing);
-            redirectAttributes.addFlashAttribute("successMessage", "Existing book found. Added " + addCopies + " more copies.");
-            return "redirect:/books";
-        }
-        book.setCreatedByUser(currentUser);
+        applySimpleBookDefaults(book, currentUser);
         bookRepository.save(book);
         redirectAttributes.addFlashAttribute("successMessage", "Book added successfully.");
         return "redirect:/books";
@@ -214,14 +189,8 @@ public class BookController {
         }
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid book ID: " + id));
-        existingBook.setIsbn(book.getIsbn());
         existingBook.setTitle(book.getTitle());
         existingBook.setAuthor(book.getAuthor());
-        existingBook.setCategory(book.getCategory());
-        existingBook.setPublication(book.getPublication());
-        existingBook.setDetail(book.getDetail());
-        existingBook.setBranch(book.getBranch());
-        existingBook.setPrice(book.getPrice());
         existingBook.setTotalCopies(book.getTotalCopies());
         if (existingBook.getCreatedByUser() == null) {
             existingBook.setCreatedByUser(currentUser);
@@ -234,6 +203,19 @@ public class BookController {
         bookRepository.save(existingBook);
         redirectAttributes.addFlashAttribute("successMessage", "Book updated successfully.");
         return "redirect:/books";
+    }
+
+    private void applySimpleBookDefaults(Book book, User currentUser) {
+        book.setCreatedByUser(currentUser);
+        if (book.getIsbn() == null || book.getIsbn().isBlank()) {
+            book.setIsbn("AUTO-" + System.currentTimeMillis() + "-" + ThreadLocalRandom.current().nextInt(100, 999));
+        }
+        if (book.getCategory() == null || book.getCategory().isBlank()) {
+            book.setCategory("General");
+        }
+        if (book.getTotalCopies() != null && (book.getAvailableCopies() == null || book.getAvailableCopies() < 0)) {
+            book.setAvailableCopies(book.getTotalCopies());
+        }
     }
 
     @GetMapping("/books/view/{id}")
