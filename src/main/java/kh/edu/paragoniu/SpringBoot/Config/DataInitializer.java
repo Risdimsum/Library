@@ -6,6 +6,7 @@ import kh.edu.paragoniu.SpringBoot.Model.User;
 import kh.edu.paragoniu.SpringBoot.Repos.BookRepository;
 import kh.edu.paragoniu.SpringBoot.Repos.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 public class DataInitializer {
 
     @Bean
+    @ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true", matchIfMissing = false)
     CommandLineRunner seedData(UserRepository userRepository, BookRepository bookRepository) {
         return args -> {
             if (userRepository.count() == 0) {
