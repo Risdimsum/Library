@@ -4,13 +4,9 @@ import kh.edu.paragoniu.SpringBoot.Model.Book;
 import kh.edu.paragoniu.SpringBoot.Model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -98,31 +94,24 @@ public class BookRepository {
             if (book.getCreatedAt() == null) {
                 book.setCreatedAt(LocalDateTime.now());
             }
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO books (isbn, title, author, category, publication, detail, branch, price, total_copies, available_copies, created_by_user_id, created_at) " +
-                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                );
-                ps.setString(1, book.getIsbn());
-                ps.setString(2, book.getTitle());
-                ps.setString(3, book.getAuthor());
-                ps.setString(4, book.getCategory());
-                ps.setString(5, book.getPublication());
-                ps.setString(6, book.getDetail());
-                ps.setString(7, book.getBranch());
-                ps.setBigDecimal(8, book.getPrice() == null ? BigDecimal.ZERO : book.getPrice());
-                ps.setObject(9, book.getTotalCopies());
-                ps.setObject(10, book.getAvailableCopies());
-                ps.setObject(11, book.getCreatedByUser() == null ? null : book.getCreatedByUser().getId());
-                ps.setTimestamp(12, Timestamp.valueOf(book.getCreatedAt()));
-                return ps;
-            }, keyHolder);
-            Number key = keyHolder.getKey();
-            if (key != null) {
-                book.setId(key.longValue());
-            }
+            Long id = jdbcTemplate.queryForObject(
+                    "INSERT INTO books (id, isbn, title, author, category, publication, detail, branch, price, total_copies, available_copies, created_by_user_id, created_at) " +
+                            "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM books), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                    Long.class,
+                    book.getIsbn(),
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getCategory(),
+                    book.getPublication(),
+                    book.getDetail(),
+                    book.getBranch(),
+                    book.getPrice() == null ? BigDecimal.ZERO : book.getPrice(),
+                    book.getTotalCopies(),
+                    book.getAvailableCopies(),
+                    book.getCreatedByUser() == null ? null : book.getCreatedByUser().getId(),
+                    Timestamp.valueOf(book.getCreatedAt())
+            );
+            book.setId(id);
             return book;
         }
 

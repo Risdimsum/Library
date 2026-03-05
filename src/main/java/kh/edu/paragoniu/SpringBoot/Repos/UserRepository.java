@@ -4,12 +4,8 @@ import kh.edu.paragoniu.SpringBoot.Model.Role;
 import kh.edu.paragoniu.SpringBoot.Model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -78,24 +74,18 @@ public class UserRepository {
             if (user.getCreatedAt() == null) {
                 user.setCreatedAt(LocalDateTime.now());
             }
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO users (name, email, password, role, active, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                );
-                ps.setString(1, user.getName());
-                ps.setString(2, user.getEmail());
-                ps.setString(3, user.getPassword());
-                ps.setString(4, user.getRole() == null ? null : user.getRole().name());
-                ps.setObject(5, user.getActive());
-                ps.setTimestamp(6, Timestamp.valueOf(user.getCreatedAt()));
-                return ps;
-            }, keyHolder);
-            Number key = keyHolder.getKey();
-            if (key != null) {
-                user.setId(key.longValue());
-            }
+            Long id = jdbcTemplate.queryForObject(
+                    "INSERT INTO users (id, name, email, password, role, active, created_at) " +
+                            "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM users), ?, ?, ?, ?, ?, ?) RETURNING id",
+                    Long.class,
+                    user.getName(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getRole() == null ? null : user.getRole().name(),
+                    user.getActive(),
+                    Timestamp.valueOf(user.getCreatedAt())
+            );
+            user.setId(id);
             return user;
         }
 

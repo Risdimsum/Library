@@ -6,13 +6,9 @@ import kh.edu.paragoniu.SpringBoot.Model.IssueStatus;
 import kh.edu.paragoniu.SpringBoot.Model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -71,25 +67,19 @@ public class IssueRepository {
     public Issue save(Issue issue) {
         if (issue.getId() == null) {
             issue.prePersist();
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO book_issues (user_id, book_id, issued_by_user_id, issue_date, due_date, return_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                );
-                ps.setLong(1, issue.getUser().getId());
-                ps.setLong(2, issue.getBook().getId());
-                ps.setObject(3, issue.getIssuedByUser() == null ? null : issue.getIssuedByUser().getId());
-                ps.setDate(4, Date.valueOf(issue.getIssueDate()));
-                ps.setDate(5, Date.valueOf(issue.getDueDate()));
-                ps.setObject(6, issue.getReturnDate() == null ? null : Date.valueOf(issue.getReturnDate()));
-                ps.setString(7, issue.getStatus().name());
-                return ps;
-            }, keyHolder);
-            Number key = keyHolder.getKey();
-            if (key != null) {
-                issue.setId(key.longValue());
-            }
+            Long id = jdbcTemplate.queryForObject(
+                    "INSERT INTO book_issues (id, user_id, book_id, issued_by_user_id, issue_date, due_date, return_date, status) " +
+                            "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM book_issues), ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                    Long.class,
+                    issue.getUser().getId(),
+                    issue.getBook().getId(),
+                    issue.getIssuedByUser() == null ? null : issue.getIssuedByUser().getId(),
+                    Date.valueOf(issue.getIssueDate()),
+                    Date.valueOf(issue.getDueDate()),
+                    issue.getReturnDate() == null ? null : Date.valueOf(issue.getReturnDate()),
+                    issue.getStatus().name()
+            );
+            issue.setId(id);
             return issue;
         }
 

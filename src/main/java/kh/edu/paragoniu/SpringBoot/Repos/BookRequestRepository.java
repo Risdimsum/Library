@@ -3,12 +3,8 @@ package kh.edu.paragoniu.SpringBoot.Repos;
 import kh.edu.paragoniu.SpringBoot.Model.BookRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,24 +40,18 @@ public class BookRequestRepository {
             if (request.getCreatedAt() == null) {
                 request.setCreatedAt(LocalDateTime.now());
             }
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO book_requests (requester_name, requested_title, requested_author, note, status, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                );
-                ps.setString(1, request.getRequesterName());
-                ps.setString(2, request.getRequestedTitle());
-                ps.setString(3, request.getRequestedAuthor());
-                ps.setString(4, request.getNote());
-                ps.setString(5, request.getStatus());
-                ps.setTimestamp(6, Timestamp.valueOf(request.getCreatedAt()));
-                return ps;
-            }, keyHolder);
-            Number key = keyHolder.getKey();
-            if (key != null) {
-                request.setId(key.longValue());
-            }
+            Long id = jdbcTemplate.queryForObject(
+                    "INSERT INTO book_requests (id, requester_name, requested_title, requested_author, note, status, created_at) " +
+                            "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM book_requests), ?, ?, ?, ?, ?, ?) RETURNING id",
+                    Long.class,
+                    request.getRequesterName(),
+                    request.getRequestedTitle(),
+                    request.getRequestedAuthor(),
+                    request.getNote(),
+                    request.getStatus(),
+                    Timestamp.valueOf(request.getCreatedAt())
+            );
+            request.setId(id);
             return request;
         }
 
