@@ -11,6 +11,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,6 +57,7 @@ public class Book {
     private BigDecimal price;
 
     @Min(value = 1, message = "Total copies must be at least 1")
+    @NotNull(message = "Total copies is mandatory")
     @Column(nullable = false)
     private Integer totalCopies;
 

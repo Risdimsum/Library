@@ -9,6 +9,7 @@ import kh.edu.paragoniu.SpringBoot.Repos.BookRepository;
 import kh.edu.paragoniu.SpringBoot.Repos.BookRequestRepository;
 import kh.edu.paragoniu.SpringBoot.Repos.UserRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -179,7 +180,14 @@ public class BookController {
             return "Form";
         }
         applySimpleBookDefaults(book, currentUser);
-        bookRepository.save(book);
+        try {
+            bookRepository.save(book);
+        } catch (DataAccessException ex) {
+            model.addAttribute("book", book);
+            model.addAttribute("activePage", "add-book");
+            model.addAttribute("errorMessage", "Cannot save book. Please fill all required fields and try again.");
+            return "Form";
+        }
         redirectAttributes.addFlashAttribute("successMessage", "Book added successfully.");
         return "redirect:/books";
     }
