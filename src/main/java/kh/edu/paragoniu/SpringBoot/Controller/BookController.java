@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BookController {
     private static final String SESSION_USER_ID = "currentUserId";
     private static final String SESSION_USER_NAME = "currentUserName";
+    private static final String SESSION_USER_ROLE = "currentUserRole";
 
     private final BookRepository bookRepository;
     private final BookRequestRepository bookRequestRepository;
@@ -94,6 +95,7 @@ public class BookController {
         }
         session.setAttribute(SESSION_USER_ID, user.getId());
         session.setAttribute(SESSION_USER_NAME, user.getName());
+        session.setAttribute(SESSION_USER_ROLE, user.getRole() == null ? Role.USER.name() : user.getRole().name());
         return "redirect:/issues/new";
     }
 
@@ -112,10 +114,11 @@ public class BookController {
     @ModelAttribute("currentUserRoleLabel")
     public String currentUserRoleLabel(HttpSession session) {
         User currentUser = resolveSessionUser(session);
-        if (currentUser == null) {
+        Role effectiveRole = resolveEffectiveRole(session, currentUser);
+        if (effectiveRole == null) {
             return "Guest";
         }
-        return Role.ADMIN.equals(currentUser.getRole()) ? "Admin" : "Student";
+        return Role.ADMIN.equals(effectiveRole) ? "Admin" : "Student";
     }
 
     @GetMapping("/books")
@@ -123,6 +126,7 @@ public class BookController {
                             Model model,
                             HttpSession session) {
         User currentUser = resolveSessionUser(session);
+        Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -133,7 +137,7 @@ public class BookController {
             books = bookRepository.searchByTitleOrAuthor(keyword.trim());
         }
         model.addAttribute("books", books);
-        model.addAttribute("isAdmin", Role.ADMIN.equals(currentUser.getRole()));
+        model.addAttribute("isAdmin", Role.ADMIN.equals(effectiveRole));
         model.addAttribute("keyword", keyword == null ? "" : keyword);
         model.addAttribute("activePage", "book-record");
         return "List";
@@ -142,10 +146,11 @@ public class BookController {
     @GetMapping("/books/add")
     public String showAddForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         User currentUser = resolveSessionUser(session);
+        Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
             return "redirect:/login";
         }
-        if (!Role.ADMIN.equals(currentUser.getRole())) {
+        if (!Role.ADMIN.equals(effectiveRole)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Only admin can add books.");
             return "redirect:/books";
         }
@@ -167,10 +172,11 @@ public class BookController {
                           RedirectAttributes redirectAttributes,
                           HttpSession session) {
         User currentUser = resolveSessionUser(session);
+        Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
             return "redirect:/login";
         }
-        if (!Role.ADMIN.equals(currentUser.getRole())) {
+        if (!Role.ADMIN.equals(effectiveRole)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Only admin can add books.");
             return "redirect:/books";
         }
@@ -293,9 +299,9 @@ public class BookController {
         if (currentUser == null) {
             return "redirect:/login";
         }
-        Role nextRole = Role.ADMIN.equals(currentUser.getRole()) ? Role.USER : Role.ADMIN;
-        currentUser.setRole(nextRole);
-        userRepository.save(currentUser);
+        Role currentRole = resolveEffectiveRole(session, currentUser);
+        Role nextRole = Role.ADMIN.equals(currentRole) ? Role.USER : Role.ADMIN;
+        session.setAttribute(SESSION_USER_ROLE, nextRole.name());
         redirectAttributes.addFlashAttribute("successMessage",
                 Role.ADMIN.equals(nextRole) ? "Switched to Admin." : "Switched to Student.");
 
@@ -311,5 +317,17 @@ public class BookController {
             return null;
         }
         return userRepository.findById(userId).orElse(null);
+    }
+
+    private Role resolveEffectiveRole(HttpSession session, User currentUser) {
+        Object roleAttr = session.getAttribute(SESSION_USER_ROLE);
+        if (roleAttr instanceof String roleName) {
+            try {
+                return Role.valueOf(roleName);
+            } catch (IllegalArgumentException ignored) {
+                // Fallback to persisted role when session role is invalid.
+            }
+        }
+        return currentUser == null ? null : currentUser.getRole();
     }
 }
