@@ -43,14 +43,6 @@ Manage books, students, and the issuing process in a simple web app for Admin/Li
 
 ---
 
-## Business Rules
-
-- Required form validation
-- Student email must be unique
-- Cannot issue when stock is unavailable
-- Issuing reduces available copies
-
----
 
 ## Tools Used
 
