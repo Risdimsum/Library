@@ -89,6 +89,7 @@ This project demonstrates how to deploy a **Spring Boot + PostgreSQL** web appli
 * PostgreSQL
 * Railway (hosting + environment management)
 
+## AI Usage
  + AI agents : ChatGPT, Claude, Codex
  + Prompt :
 1. add some feature add Book class
