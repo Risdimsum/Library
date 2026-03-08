@@ -1,6 +1,71 @@
-+ Spring Boot web application for managing library books, deployed on Railway with PostgreSQL.
+# Digital Library Management System
 
-# Deployment (Railway + PostgreSQL)
+A Spring Boot web application for managing library books, students, and book issuing — deployed on Railway with PostgreSQL.
+
+---
+
+## Project Purpose
+
+Manage books, students, and the issuing process in a simple web app for Admin/Librarian use.
+
+---
+
+## Features
+
+- Login / Logout
+- Add Book
+- Book Record (list + search)
+- Add Student
+- Student Report
+- Issue Book
+- Issue Report
+- Error page handling
+
+---
+
+## Main Flow
+
+1. Add Student
+2. Add Book
+3. View Book Record
+4. Issue Book
+5. View Issue Report
+6. Logout
+
+---
+
+## Data Entities
+
+- `books`
+- `users`
+- `book_issues`
+- `book_requests` (optional)
+
+---
+
+## Business Rules
+
+- Required form validation
+- Student email must be unique
+- Cannot issue when stock is unavailable
+- Issuing reduces available copies
+
+---
+
+## Tools Used
+
+- Java 21
+- Spring Boot 4.0.2
+- Gradle
+- Spring Web
+- Thymeleaf
+- Spring Data JPA
+- PostgreSQL
+- Railway (hosting + environment management)
+
+---
+
+## Deployment (Railway + PostgreSQL)
 
 1. Push the source code to GitHub.
 2. Create a new project in Railway and connect the GitHub repository.
@@ -10,133 +75,94 @@
 
 Railway automatically provides the following environment variables:
 
-* DATABASE_URL
-* PGHOST
-* PGPORT
-* PGDATABASE
-* PGUSER
-* PGPASSWORD
-* PORT
+- `DATABASE_URL`
+- `PGHOST`
+- `PGPORT`
+- `PGDATABASE`
+- `PGUSER`
+- `PGPASSWORD`
+- `PORT`
 
-# Application Configuration
+---
 
-- File location:
+## Application Configuration
 
-src/main/resources/application.properties
+File location: `src/main/resources/application.properties`
 
-- Configuration used in this project:
+```properties
 server.port=${PORT:8080}
-spring.datasource.url=${SPRING_DATASOURCE_URL:${DATABASE_URL:jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:postgres}}}
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:postgres}}
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME:${PGUSER:postgres}}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:${PGPASSWORD:}}
 spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
+spring.main.lazy-initialization=true
+spring.datasource.hikari.maximum-pool-size=2
+server.tomcat.threads.max=5
+```
 
 This configuration allows the application to:
+- Use Railway environment variables in production
+- Use local PostgreSQL settings during development
 
-* Use Railway environment variables in production
-* Use local PostgreSQL settings during development
+---
 
-# Database Driver (Gradle)
+## Database Driver (Gradle)
 
 PostgreSQL driver is included in `build.gradle`:
 
-```
+```groovy
 runtimeOnly 'org.postgresql:postgresql'
 ```
 
-# Start Command (Railway)
+---
 
-The application is started using a **Procfile**.
-
-Procfile:
-
-web: java -jar build/libs/Test.jar
-
-The Gradle `bootJar` task builds the application as:
+## Start Command (Procfile)
 
 ```
-build/libs/Test.jar
+web: java -XX:+UseSerialGC -Xms32m -Xmx192m -XX:MaxMetaspaceSize=256m -XX:ReservedCodeCacheSize=64m -jar build/libs/Test.jar
 ```
 
-Railway runs this file to start the Spring Boot application.
+---
 
 ## Run Locally
 
-To start the application locally:
-
+```bash
 ./gradlew bootRun
+```
 
-If running with a local PostgreSQL database, configure environment variables or use the default values provided in `application.properties`.
+---
 
-##Verify Deployment
+## Verify Deployment
 
 1. Open Railway deployment logs.
 2. Confirm the application starts without database errors.
 3. Open the Railway application URL.
-4. Test the web pages that create, read, update, or delete books to verify PostgreSQL integration.
+4. Test create, read, update, delete operations to verify PostgreSQL integration.
 
-## Project Purpose
-
-This project demonstrates how to deploy a **Spring Boot + PostgreSQL** web application on Railway with environment-based configuration.
-
-+ Tools Used :
-* Java 17
-* Spring Boot 3.2.5
-* Gradle
-* Spring Web
-* Thymeleaf
-* Spring JDBC
-* PostgreSQL
-* Railway (hosting + environment management)
+---
 
 ## AI Usage
- + AI agents : ChatGPT, Claude, Codex
- + Prompt :
-1. add some feature add Book class
-2. add some feature on BookService,
-3. so in this case can u adjust i will give u the sequence or u can adjust this sequence to make it in order
-4. student login, add new book, book record i will let u see the photots, for the ui not like this u can digitize it with bootstrap
-5. can u connect directory or adjust some part to fit with my templates aftet i add new some feature and inetegrate or connect it to main java config, controller and mdoel and more
+
+**AI Agents used:** ChatGPT, Claude, Codex
+
+**Prompts used:**
+
+1. Add some feature — add Book class
+2. Add some feature on BookService
+3. Adjust sequence to make it in order
+4. Student login, add new book, book record — digitize UI with Bootstrap
+5. Connect directory and adjust parts to fit with templates after adding new features
 6. Project prompt (list format):
-Project Name: Digital Library Management System
-Goal: Manage books, students, and issuing process in a simple web app
-Scope: Core CRUD-like operations for books/students + issue tracking
-Users: Admin/Librarian
--Features:
-Login/Logout
-Add Book
-Book Record (list + search)
-Add Student
-Student Report
-Issue Book
-Issue Report
-Error page handling
-Main Flow:
-Add Student
-Add Book
-View Book Record
-Issue Book
-View Issue Report
-Logout
-Data Entities:
-books
-users
-book_issues
-book_requests (optional)
-Business Rules:
-Required form validation
-Student email must be unique
-Cannot issue when stock is unavailable
-Issuing reduces available copies
-7. Analyze the following Spring Boot deployment issue. The application runs on Railway free tier with very limited RAM. It uses Spring Boot 3.2.5, Java 21, Hibernate 6.4.4, PostgreSQL,
-and Spring Data JPA with 4 repositories. The application fails during startup with `java.lang.OutOfMemoryError: Metaspace`.
-Explain why Metaspace exhaustion happens in small containers and what parts of Spring Boot and Hibernate contribute to class loading and dynamic bytecode generation.
-8. Based on the previous analysis, propose configuration changes to reduce memory usage in a Spring Boot + Hibernate application. Focus on minimizing class loading, reducing Hibernate bytecode enhancement,
-limiting repository scanning, and lowering connection pool size.
-9. Generate an optimized `application.properties` configuration suitable for running a Spring Boot 3 application with JPA in a very small container (≤256MB RAM).
-Include settings for Hibernate, HikariCP, JPA, and logging that help reduce startup memory usage.
-10. Suggest JVM options optimized for small containers running Spring Boot on Java 21. The goal is to prevent Metaspace OOM while keeping heap usage small.
-Include recommended values for `-Xmx`, `-Xms`, `MaxMetaspaceSize`, and garbage collector selection.
-11. Provide code modifications for the main Spring Boot application class to restrict component scanning, entity scanning, and repository scanning to specific packages in order to reduce unnecessary class loading.
-12. Review a typical Gradle dependency list for a Spring Boot project and recommend which Spring Boot starters or libraries can be safely removed to reduce memory footprint if they are not strictly required.
-13. If the application still cannot run within the memory limits of Railway free tier, suggest architectural alternatives such as replacing Hibernate with JDBC, reducing repository usage, or switching deployment platforms.
+   - Project Name: Digital Library Management System
+   - Goal: Manage books, students, and issuing process in a simple web app
+   - Scope: Core CRUD-like operations for books/students + issue tracking
+   - Users: Admin/Librarian
+7. Analyze Spring Boot deployment OOM: Metaspace issue on Railway free tier
+8. Propose configuration changes to reduce memory usage in Spring Boot + Hibernate
+9. Generate optimized `application.properties` for small containers (≤256MB RAM)
+10. Suggest JVM options optimized for small containers running Spring Boot on Java 21
+11. Modify main Spring Boot class to restrict component/entity/repository scanning
+12. Review Gradle dependencies and recommend removals to reduce memory footprint
+13. Suggest architectural alternatives if app cannot run within Railway free tier limits
