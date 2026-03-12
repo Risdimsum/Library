@@ -43,7 +43,6 @@ Manage books, students, and the issuing process in a simple web app for Admin/Li
 
 ---
 
-
 ## Tools Used
 
 - Java 21
@@ -102,8 +101,6 @@ This configuration allows the application to:
 
 ## Database Driver (Gradle)
 
-PostgreSQL driver is included in `build.gradle`:
-
 ```groovy
 runtimeOnly 'org.postgresql:postgresql'
 ```
@@ -158,3 +155,4 @@ web: java -jar build/libs/Test.jar
 11. Modify main Spring Boot class to restrict component/entity/repository scanning
 12. Review Gradle dependencies and recommend removals to reduce memory footprint
 13. Suggest architectural alternatives if app cannot run within Railway free tier limits
+```
