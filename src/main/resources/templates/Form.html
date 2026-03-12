@@ -179,17 +179,31 @@
 
             <!-- ── FORM ── -->
             <form th:action="${book.id != null} ? @{/books/edit/{id}(id=${book.id})} : @{/books/add}"
-                  th:object="${book}" method="post">
+                  th:object="${book}" method="post" enctype="multipart/form-data">
 
                 <!-- BOOK INFO -->
                 <div class="sec-head">
                     <div class="sec-dot" style="background:var(--indigo)"></div>
                     <span>Book Information</span>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="field-lbl">Cover Image</label>
+                    <input type="file" name="coverFile" accept="image/*" class="form-control">
+                    <div th:if="${book.coverPath}" style="margin-top:8px;">
+                        <img th:src="@{${book.coverPath}}" alt="Cover" style="max-height:160px;border-radius:8px;">
+                    </div>
                 </div>
 
                 <div class="row g-3 mb-2">
                     <div class="col-12">
                         <label class="field-lbl">Book Name *</label>
+                      <!--  <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" width="50"
+                             height="50"
+                             alt="CSS3 Logo">
+                         <img th:src="@{/images/image.png}" alt="Book cover">
+                        <img src="https://commons.wikimedia.org/wiki/File:CSS3_logo_and_wordmark.svg"> -->
                         <input class="inp" th:class="${#fields.hasErrors('title')} ? 'inp is-invalid' : 'inp'"
                                type="text" th:field="*{title}" placeholder="e.g. Effective Java">
                         <div class="err-msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>

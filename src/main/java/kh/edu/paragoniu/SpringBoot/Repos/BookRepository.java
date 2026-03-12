@@ -33,6 +33,7 @@ public class BookRepository {
         book.setPrice(rs.getBigDecimal("price"));
         book.setTotalCopies(rs.getObject("total_copies", Integer.class));
         book.setAvailableCopies(rs.getObject("available_copies", Integer.class));
+        book.setCoverPath(rs.getString("cover_path")); // maps stored cover path
         Long createdById = rs.getObject("created_by_user_id", Long.class);
         if (createdById != null) {
             User user = new User();
@@ -95,8 +96,8 @@ public class BookRepository {
                 book.setCreatedAt(LocalDateTime.now());
             }
             Long id = jdbcTemplate.queryForObject(
-                    "INSERT INTO books (id, isbn, title, author, category, publication, detail, branch, price, total_copies, available_copies, created_by_user_id, created_at) " +
-                            "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM books), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                    "INSERT INTO books (id, isbn, title, author, category, publication, detail, branch, price, total_copies, available_copies, created_by_user_id, cover_path, created_at) " +
+                            "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM books), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
                     Long.class,
                     book.getIsbn(),
                     book.getTitle(),
@@ -105,10 +106,11 @@ public class BookRepository {
                     book.getPublication(),
                     book.getDetail(),
                     book.getBranch(),
-                    book.getPrice() == null ? BigDecimal.ZERO : book.getPrice(),
+                    book.getPrice() == null ? BigDecimal.ONE : book.getPrice(),
                     book.getTotalCopies(),
                     book.getAvailableCopies(),
                     book.getCreatedByUser() == null ? null : book.getCreatedByUser().getId(),
+                    book.getCoverPath(),
                     Timestamp.valueOf(book.getCreatedAt())
             );
             book.setId(id);
@@ -116,7 +118,7 @@ public class BookRepository {
         }
 
         jdbcTemplate.update(
-                "UPDATE books SET isbn = ?, title = ?, author = ?, category = ?, publication = ?, detail = ?, branch = ?, price = ?, total_copies = ?, available_copies = ?, created_by_user_id = ? WHERE id = ?",
+                "UPDATE books SET isbn = ?, title = ?, author = ?, category = ?, publication = ?, detail = ?, branch = ?, price = ?, total_copies = ?, available_copies = ?, created_by_user_id = ?, cover_path = ? WHERE id = ?",
                 book.getIsbn(),
                 book.getTitle(),
                 book.getAuthor(),
@@ -128,6 +130,7 @@ public class BookRepository {
                 book.getTotalCopies(),
                 book.getAvailableCopies(),
                 book.getCreatedByUser() == null ? null : book.getCreatedByUser().getId(),
+                book.getCoverPath(),
                 book.getId()
         );
         return book;

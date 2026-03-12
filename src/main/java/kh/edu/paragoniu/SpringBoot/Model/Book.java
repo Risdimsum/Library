@@ -65,6 +65,9 @@ public class Book {
     @Column(nullable = false)
     private Integer availableCopies;
 
+    private String coverPath;
+
+
     @ManyToOne
     @JoinColumn(name = "created_by_user_id")
     private User createdByUser;
@@ -95,4 +98,12 @@ public class Book {
         if (totalCopies == null || availableCopies == null) return 0;
         return totalCopies - availableCopies;
     }
+    public String getCoverPath() {
+        return coverPath;
+    }
+    public void setCoverPath(String coverPath) {
+        this.coverPath = coverPath;
+    }
+
+
 }

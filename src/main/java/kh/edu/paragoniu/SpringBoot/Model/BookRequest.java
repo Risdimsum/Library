@@ -28,16 +28,16 @@ public class BookRequest {
 
     @NotBlank(message = "Requester name is mandatory")
     @Column(nullable = false)
-    private String requesterName;
+    private String requesterName; //
 
     @NotBlank(message = "Requested title is mandatory")
     @Column(nullable = false)
-    private String requestedTitle;
+    private String requestedTitle; //
 
     private String requestedAuthor;
 
     @Column(columnDefinition = "TEXT")
-    private String note;
+    private String note; //
 
     @Column(nullable = false)
     private String status;
@@ -51,7 +51,7 @@ public class BookRequest {
             status = "PENDING";
         }
         if (createdAt == null) {
-            createdAt = LocalDateTime.now();
+            createdAt = LocalDateTime.now(); //
         }
     }
 }

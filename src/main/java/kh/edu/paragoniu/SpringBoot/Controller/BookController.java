@@ -19,14 +19,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Controller
 public class BookController {
+    // Session keys used across controller methods.
     private static final String SESSION_USER_ID = "currentUserId";
     private static final String SESSION_USER_NAME = "currentUserName";
     private static final String SESSION_USER_ROLE = "currentUserRole";
@@ -34,6 +43,21 @@ public class BookController {
     private final BookRepository bookRepository;
     private final BookRequestRepository bookRequestRepository;
     private final UserRepository userRepository;
+
+    // Saves uploaded cover to a writable temp folder (/tmp/covers) and returns web path.
+    private String storeCover(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+        String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        String name = UUID.randomUUID() + "." + (ext == null ? "png" : ext);
+        // Use system temp (writable in most deployments, including Railway)
+        Path base = Paths.get(System.getProperty("java.io.tmpdir"), "covers");
+        Files.createDirectories(base);
+        Path dest = base.resolve(name);
+        file.transferTo(dest.toFile());
+        return "/covers/" + name; // served via file:${java.io.tmpdir}/ in static locations
+    }
 
     public BookController(BookRepository bookRepository,
                           BookRequestRepository bookRequestRepository,
@@ -45,6 +69,7 @@ public class BookController {
 
     @ModelAttribute("book")
     public Book bookModel() {
+        // Default model object for add/edit form binding.
         return new Book();
     }
 
@@ -52,6 +77,7 @@ public class BookController {
     public String loginPage(@RequestParam(value = "error", required = false) String error,
                             HttpSession session,
                             Model model) {
+        // If already logged in, skip login page.
         if (resolveSessionUser(session) != null) {
             return "redirect:/students/add";
         }
@@ -65,7 +91,7 @@ public class BookController {
                               @RequestParam("password") String password,
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
-        // Non-strict login with auto student provisioning from input.
+        // Non-strict login: creates a USER account automatically if email does not exist.
         String inputName = name == null ? "" : name.trim();
         String email = username == null ? "" : username.trim().toLowerCase(Locale.ROOT);
         if (email.isBlank()) {
@@ -101,18 +127,21 @@ public class BookController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
+        // Remove all session values and return to login.
         session.invalidate();
         return "redirect:/login";
     }
 
     @ModelAttribute("currentUserName")
     public String currentUserName(HttpSession session) {
+        // Shared template value for navbar/user label.
         Object value = session.getAttribute(SESSION_USER_NAME);
         return value == null ? "Guest" : value.toString();
     }
 
     @ModelAttribute("currentUserRoleLabel")
     public String currentUserRoleLabel(HttpSession session) {
+        // Shared template value for showing current role.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (effectiveRole == null) {
@@ -125,6 +154,7 @@ public class BookController {
     public String listBooks(@RequestParam(value = "keyword", required = false) String keyword,
                             Model model,
                             HttpSession session) {
+        // Shows all books or filtered search results.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
@@ -145,6 +175,7 @@ public class BookController {
 
     @GetMapping("/books/add")
     public String showAddForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        // Only ADMIN can access add-book page.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
@@ -162,15 +193,17 @@ public class BookController {
             model.addAttribute("book", new Book());
         }
         model.addAttribute("activePage", "add-book");
-        return "Form";
+        return "Form"; // add book
     }
 
-    @PostMapping("/books/add")
+    @PostMapping(value = "/books/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String addBook(@Valid Book book,
                           BindingResult result,
+                          @RequestParam(value = "coverFile", required = false) MultipartFile coverFile,
                           Model model,
                           RedirectAttributes redirectAttributes,
                           HttpSession session) {
+        // Validates input, applies default values, then saves.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
@@ -183,9 +216,20 @@ public class BookController {
         if (result.hasErrors()) {
             model.addAttribute("book", book);
             model.addAttribute("activePage", "add-book");
-            return "Form";
+            return "Form"; // add book
         }
         applySimpleBookDefaults(book, currentUser);
+        try {
+            String coverPath = storeCover(coverFile); // store cover and attach path
+            if (coverPath != null) {
+                book.setCoverPath(coverPath);
+            }
+        } catch (IOException ioEx) {
+            model.addAttribute("book", book);
+            model.addAttribute("activePage", "add-book");
+            model.addAttribute("errorMessage", "Cannot save cover image: " + ioEx.getMessage());
+            return "Form";
+        }
         try {
             bookRepository.save(book);
         } catch (DataAccessException ex) {
@@ -200,6 +244,7 @@ public class BookController {
 
     @GetMapping("/books/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model, HttpSession session) {
+        // Reuses the same form template for editing an existing book.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
@@ -210,9 +255,11 @@ public class BookController {
         return "Form";
     }
 
-    @PostMapping("/books/edit/{id}")
+    @PostMapping(value = "/books/edit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String updateBook(@PathVariable("id") Long id, @Valid Book book, BindingResult result, Model model,
-                             RedirectAttributes redirectAttributes, HttpSession session) {
+                             RedirectAttributes redirectAttributes, HttpSession session,
+                             @RequestParam(value = "coverFile", required = false) MultipartFile coverFile) {
+        // Updates editable fields and keeps availableCopies consistent with totalCopies.
         User currentUser = resolveSessionUser(session);
         if (currentUser == null) {
             return "redirect:/login";
@@ -230,6 +277,17 @@ public class BookController {
         if (existingBook.getCreatedByUser() == null) {
             existingBook.setCreatedByUser(currentUser);
         }
+        try {
+            String coverPath = storeCover(coverFile); // replace cover when new file uploaded
+            if (coverPath != null) {
+                existingBook.setCoverPath(coverPath);
+            }
+        } catch (IOException ioEx) {
+            model.addAttribute("book", book);
+            model.addAttribute("activePage", "book-record");
+            model.addAttribute("errorMessage", "Cannot save cover image: " + ioEx.getMessage());
+            return "Form";
+        }
         if (existingBook.getAvailableCopies() == null) {
             existingBook.setAvailableCopies(book.getTotalCopies());
         } else if (existingBook.getAvailableCopies() > book.getTotalCopies()) {
@@ -241,6 +299,7 @@ public class BookController {
     }
 
     private void applySimpleBookDefaults(Book book, User currentUser) {
+        // Fill optional fields so book records remain usable even with minimal input.
         book.setCreatedByUser(currentUser);
         if (book.getIsbn() == null || book.getIsbn().isBlank()) {
             book.setIsbn("AUTO-" + System.currentTimeMillis() + "-" + ThreadLocalRandom.current().nextInt(100, 999));
@@ -255,14 +314,16 @@ public class BookController {
 
     @GetMapping("/books/view/{id}")
     public String viewBook(@PathVariable("id") Long id, HttpSession session) {
+        // "View" route currently redirects to edit page.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
-        return "redirect:/books/edit/" + id;
+        return "redirect:/books/edit/" + id; ///
     }
 
     @GetMapping("/books/requests")
     public String showBookRequests(Model model, HttpSession session) {
+        // Shows request form and request history.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
@@ -278,6 +339,7 @@ public class BookController {
                                     Model model,
                                     RedirectAttributes redirectAttributes,
                                     HttpSession session) {
+        // Saves a new request when validation passes.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
@@ -295,6 +357,7 @@ public class BookController {
     public String switchRole(HttpSession session,
                              RedirectAttributes redirectAttributes,
                              @RequestHeader(value = "Referer", required = false) String referer) {
+        // Debug/helper action to switch between ADMIN and USER role in session.
         User currentUser = resolveSessionUser(session);
         if (currentUser == null) {
             return "redirect:/login";
@@ -306,12 +369,13 @@ public class BookController {
                 Role.ADMIN.equals(nextRole) ? "Switched to Admin." : "Switched to Student.");
 
         if (referer != null && !referer.isBlank()) {
-            return "redirect:" + referer;
+            return "redirect:" + referer;  // go BACK to where you came from
         }
         return "redirect:/books";
     }
 
     private User resolveSessionUser(HttpSession session) {
+        // Reads logged-in user id from session and loads full user entity.
         Object id = session.getAttribute(SESSION_USER_ID);
         if (!(id instanceof Long userId)) {
             return null;
@@ -320,6 +384,7 @@ public class BookController {
     }
 
     private Role resolveEffectiveRole(HttpSession session, User currentUser) {
+        // Session role overrides persisted role; fallback protects against bad session values.
         Object roleAttr = session.getAttribute(SESSION_USER_ROLE);
         if (roleAttr instanceof String roleName) {
             try {

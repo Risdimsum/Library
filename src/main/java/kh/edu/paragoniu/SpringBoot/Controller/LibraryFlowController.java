@@ -25,6 +25,7 @@ import java.util.List;
 
 @Controller
 public class    LibraryFlowController {
+    // Session keys shared with other controllers.
     private static final String SESSION_USER_ID = "currentUserId";
     private static final String SESSION_USER_NAME = "currentUserName";
     private static final String SESSION_USER_ROLE = "currentUserRole";
@@ -43,12 +44,14 @@ public class    LibraryFlowController {
 
     @ModelAttribute("currentUserName")
     public String currentUserName(HttpSession session) {
+        // Shared template value for current user label.
         Object value = session.getAttribute(SESSION_USER_NAME);
         return value == null ? "Guest" : value.toString();
     }
 
     @ModelAttribute("currentUserRoleLabel")
     public String currentUserRoleLabel(HttpSession session) {
+        // Shared template value for role badge/text.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (effectiveRole == null) {
@@ -59,12 +62,13 @@ public class    LibraryFlowController {
 
     @GetMapping("/students/add")
     public String showAddStudent(Model model, HttpSession session) {
+        // Shows the form used to create a student account.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
         model.addAttribute("studentForm", new StudentForm());
         model.addAttribute("activePage", "add-student");
-        return "AddStudent";
+        return "AddStudent"; //
     }
 
     @PostMapping("/students/add")
@@ -73,6 +77,7 @@ public class    LibraryFlowController {
                              Model model,
                              RedirectAttributes redirectAttributes,
                              HttpSession session) {
+        // Creates a USER role account and stores it in session as current user.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
@@ -120,6 +125,7 @@ public class    LibraryFlowController {
 
     @GetMapping("/students")
     public String listStudents(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        // Shows all students; redirects to add page if none exist.
         if (resolveSessionUser(session) == null) {
             return "redirect:/login";
         }
@@ -135,6 +141,7 @@ public class    LibraryFlowController {
 
     @GetMapping("/issues/new")
     public String showIssueBookForm(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        // Shows issue form after validating required data exists (students + available books).
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
@@ -164,6 +171,7 @@ public class    LibraryFlowController {
                             Model model,
                             RedirectAttributes redirectAttributes,
                             HttpSession session) {
+        // Creates an issue record and decreases availableCopies by 1.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
@@ -217,6 +225,7 @@ public class    LibraryFlowController {
 
     @GetMapping("/issues")
     public String issueReport(Model model, HttpSession session) {
+        // USER sees own issues; ADMIN sees all issues.
         User currentUser = resolveSessionUser(session);
         Role effectiveRole = resolveEffectiveRole(session, currentUser);
         if (currentUser == null) {
@@ -232,6 +241,7 @@ public class    LibraryFlowController {
     }
 
     private void addIssuePageData(Model model, User currentUser, Role effectiveRole) {
+        // Prepares dropdown data for issue form.
         if (currentUser != null && Role.USER.equals(effectiveRole)) {
             model.addAttribute("students", List.of(currentUser));
         } else {
@@ -241,6 +251,7 @@ public class    LibraryFlowController {
     }
 
     public static class StudentForm {
+        // Form object for creating student users.
         @NotBlank(message = "Student name is mandatory")
         private String name;
 
@@ -276,6 +287,7 @@ public class    LibraryFlowController {
     }
 
     public static class IssueForm {
+        // Form object for issuing one selected book to one selected user.
         private Long userId;
         private Long bookId;
 
@@ -297,6 +309,7 @@ public class    LibraryFlowController {
     }
 
     private User resolveSessionUser(HttpSession session) {
+        // Reads logged-in user from session.
         Object id = session.getAttribute(SESSION_USER_ID);
         if (!(id instanceof Long userId)) {
             return null;
@@ -305,6 +318,7 @@ public class    LibraryFlowController {
     }
 
     private Role resolveEffectiveRole(HttpSession session, User currentUser) {
+        // Uses session role when available, then falls back to persisted user role.
         Object roleAttr = session.getAttribute(SESSION_USER_ROLE);
         if (roleAttr instanceof String roleName) {
             try {

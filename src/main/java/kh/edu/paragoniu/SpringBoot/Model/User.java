@@ -50,7 +50,7 @@ public class User {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
+    @PrePersist //run this method automatically BEFORE saving to the database
     public void prePersist() {
         if (role == null) {
             role = Role.USER;
